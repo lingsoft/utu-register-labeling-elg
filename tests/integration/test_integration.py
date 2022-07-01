@@ -37,7 +37,8 @@ class TestIntegration(unittest.TestCase):
     def test_api_response_content(self):
         payload = create_payload(self.steady_text)
         response = call_api(payload)["response"]
-        self.assertEqual(len(response.get("classes")), 24)
+        # Should return at least one class with threshold 0.4
+        self.assertGreater(len(response.get("classes")), 0)
 
     def test_api_response_with_empty_text(self):
         payload = create_payload("")
