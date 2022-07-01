@@ -1,0 +1,4 @@
+[submodule "app/ttml"]
+	path = app/ttml
+	url = git@github.com:lingsoft/torch-transformers-multilabel.git
+	branch = elg
