@@ -1,0 +1,9 @@
+# Simple development container
+# Usage:
+# docker build -t reglab-dev .
+# docker run -it --rm -v $(pwd):/app -u $(id -u):$(id -g) reglab-dev bash
+
+FROM python:3.8-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
