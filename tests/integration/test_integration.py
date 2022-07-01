@@ -45,8 +45,7 @@ class TestIntegration(unittest.TestCase):
         self.assertIn("classes", response)
 
     def test_api_response_with_too_long_text(self):
-        # TODO FAIL Internal error with value 200
-        long_text = "Long set. " * 300
+        long_text = "Long set. " * 200
         payload = create_payload(long_text)
         response = call_api(payload)
         self.assertEqual(response['failure']['errors'][0]['code'],
