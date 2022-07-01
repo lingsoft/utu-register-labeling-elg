@@ -6,6 +6,7 @@ from elg.model.base import StandardMessages
 from elg.model.base import StatusMessage
 
 from ttml.predict import load_models, predict
+from utils import basic_tokenize
 
 
 MODEL_DIR = 'ttml/models/'
@@ -26,8 +27,7 @@ class RegLab(FlaskService):
         threshold = 0.4
         sub_labels = False
 
-        # Might need better tokenizer
-        if len(content.split()) > MAX_TOKENS:
+        if len(basic_tokenize(content)) > MAX_TOKENS:
             error = StatusMessage(
                     code="lingsoft.token.too.many",
                     text="Given text contains too many tokens",
