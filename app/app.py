@@ -25,7 +25,7 @@ class RegLab(FlaskService):
 
         content = request.content
         threshold = 0.4
-        sub_labels = False
+        all_labels = True
 
         if len(basic_tokenize(content)) > MAX_TOKENS:
             error = StatusMessage(
@@ -49,16 +49,19 @@ class RegLab(FlaskService):
             error = StandardMessages.generate_elg_request_too_large()
             return Failure(errors=[error])
 
+        # TODO Add parameter handling
+
         try:
             predictions = predict(self.tokenizer, self.model, content)
             predictions.sort(key=lambda x: x[1], reverse=True)
             classes = []
             for label, prob in predictions:
-                # add threshold and label set
-                classes.append({
-                    "class": label,
-                    "score": prob,
-                })
+                if prob > threshold:
+                    if all_labels or label.isupper():
+                        classes.append({
+                            "class": label,
+                            "score": prob,
+                        })
             return ClassificationResponse(classes=classes)
         except Exception as err:
             error = StandardMessages.\
