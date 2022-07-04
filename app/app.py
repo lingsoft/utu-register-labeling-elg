@@ -6,7 +6,7 @@ from elg.model.base import StandardMessages
 from elg.model.base import StatusMessage
 
 from ttml.predict import load_models, predict
-from utils import basic_tokenize
+from utils import basic_tokenize, full_register_name
 
 
 MODEL_DIR = 'ttml/models/'
