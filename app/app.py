@@ -7,6 +7,7 @@ from elg.model.base import StatusMessage
 
 from ttml.predict import load_models, predict
 from utils import basic_tokenize, full_register_name
+from utils import validate_params_type, validate_threshold, validate_sub_registers
 
 
 MODEL_DIR = 'ttml/models/'
@@ -24,8 +25,6 @@ class RegLab(FlaskService):
     def process_text(self, request: TextRequest):
 
         content = request.content
-        threshold = 0.4
-        all_labels = True
 
         if len(content) > MAX_CHAR:
             error = StandardMessages.generate_elg_request_too_large()
@@ -48,7 +47,23 @@ class RegLab(FlaskService):
                     params=[])
             return Failure(errors=[error])
 
-        # TODO Add parameter handling
+        threshold = 0.4
+        sub_registers = True
+        warnings = []
+
+        params = request.params
+        if params: 
+            params_warning = validate_params_type(params) 
+            if params_warning is None:
+                threshold, warning = validate_threshold(params, threshold)
+                if warning is not None:
+                    warnings.append(warning)
+                sub_registers, warning = validate_sub_registers(
+                        params, sub_registers)
+                if warning is not None:
+                    warnings.append(warning)
+            else:
+                warnings.append(params_warning)
 
         try:
             predictions = predict(self.tokenizer, self.model, content)
@@ -56,7 +71,8 @@ class RegLab(FlaskService):
             classes = []
             for label, prob in predictions:
                 if prob > threshold:
-                    if all_labels or label.isupper():
+                    # General registers are in uppercase.
+                    if sub_registers or label.isupper():
                         label, name = full_register_name(label)
                         full_name = label + " - " + name
                         # TODO Add warning if Unknown
@@ -64,7 +80,7 @@ class RegLab(FlaskService):
                             "class": full_name,
                             "score": prob,
                         })
-            return ClassificationResponse(classes=classes)
+            return ClassificationResponse(classes=classes, warnings=warnings)
         except Exception as err:
             error = StandardMessages.\
                     generate_elg_service_internalerror(params=[str(err)])
