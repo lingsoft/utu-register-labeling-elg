@@ -57,8 +57,11 @@ class RegLab(FlaskService):
             for label, prob in predictions:
                 if prob > threshold:
                     if all_labels or label.isupper():
+                        label, name = full_register_name(label)
+                        full_name = label + " - " + name
+                        # TODO Add warning if Unknown
                         classes.append({
-                            "class": label,  ## TODO Full names
+                            "class": full_name,
                             "score": prob,
                         })
             return ClassificationResponse(classes=classes)
