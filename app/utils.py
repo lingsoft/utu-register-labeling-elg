@@ -5,6 +5,7 @@ import unicodedata
 from distutils.util import strtobool
 
 from elg.model.base import StatusMessage
+from elg.model.base import StandardMessages
 
 
 registers = {
@@ -47,6 +48,31 @@ translation_table = str.maketrans({ c: ' '+c+' ' for c in punct_chars })
 # Basic tokenizer from keras-bert-ner by TurkuNLP. MIT license.
 def basic_tokenize(text):
     return text.translate(translation_table).split()
+
+
+def validate_content(content, max_char, max_tokens, max_token_length):
+
+    if len(content) > max_char:
+        return StandardMessages.generate_elg_request_too_large()
+
+    if len(basic_tokenize(content)) > max_tokens:
+        error = StatusMessage(
+                code="lingsoft.token.too.many",
+                text="Given text contains too many tokens",
+                params=[])
+        return error
+
+    longest = 0
+    if content:
+        longest = max(len(token) for token in content.split())
+    if longest > max_token_length:
+        error = StatusMessage(
+                code="lingsoft.token.too.long",
+                text="Given text contains too long tokens",
+                params=[])
+        return error
+
+    return None
 
 
 def validate_params_type(params):

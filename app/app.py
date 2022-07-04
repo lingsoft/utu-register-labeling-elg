@@ -2,12 +2,11 @@ import os
 
 from elg import FlaskService
 from elg.model import TextRequest, ClassificationResponse, Failure
-from elg.model.base import StandardMessages
-from elg.model.base import StatusMessage
 
 from ttml.predict import load_models, predict
 from utils import basic_tokenize, full_register_name
-from utils import validate_params_type, validate_threshold, validate_sub_registers
+from utils import validate_content, validate_params_type
+from utils import validate_threshold, validate_sub_registers
 
 
 MODEL_DIR = 'ttml/models/'
@@ -25,26 +24,9 @@ class RegLab(FlaskService):
     def process_text(self, request: TextRequest):
 
         content = request.content
-
-        if len(content) > MAX_CHAR:
-            error = StandardMessages.generate_elg_request_too_large()
-            return Failure(errors=[error])
-
-        if len(basic_tokenize(content)) > MAX_TOKENS:
-            error = StatusMessage(
-                    code="lingsoft.token.too.many",
-                    text="Given text contains too many tokens",
-                    params=[])
-            return Failure(errors=[error])
-
-        longest = 0
-        if content:
-            longest = max(len(token) for token in content.split())
-        if longest > MAX_TOKEN_LENGTH:
-            error = StatusMessage(
-                    code="lingsoft.token.too.long",
-                    text="Given text contains too long tokens",
-                    params=[])
+        error = validate_content(
+                content, MAX_CHAR, MAX_TOKENS, MAX_TOKEN_LENGTH)
+        if error is not None:
             return Failure(errors=[error])
 
         threshold = 0.4
