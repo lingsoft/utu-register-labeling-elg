@@ -40,6 +40,11 @@ class TestIntegration(unittest.TestCase):
         # Should return at least one class with threshold 0.4
         self.assertGreater(len(response.get("classes")), 0)
 
+    def test_api_response_class_names(self):
+        payload = create_payload(self.steady_text)
+        response = call_api(payload)["response"]
+        self.assertEqual(len(response["classes"][0]["class"].split("-")), 2)
+
     def test_api_response_with_empty_text(self):
         payload = create_payload("")
         response = call_api(payload)["response"]
@@ -49,15 +54,15 @@ class TestIntegration(unittest.TestCase):
         long_text = "Long set. " * 200
         payload = create_payload(long_text)
         response = call_api(payload)
-        self.assertEqual(response['failure']['errors'][0]['code'],
-                         'lingsoft.token.too.many')
+        self.assertEqual(response["failure"]["errors"][0]["code"],
+                         "lingsoft.token.too.many")
 
     def test_api_response_with_long_token(self):
         long_token = "å" * 101
         payload = create_payload(long_token)
         response = call_api(payload)
-        self.assertEqual(response['failure']['errors'][0]['code'],
-                         'lingsoft.token.too.long')
+        self.assertEqual(response["failure"]["errors"][0]["code"],
+                         "lingsoft.token.too.long")
 
     def test_api_response_with_special_characters(self):
         spec_text = "\N{grinning face}\u4e01\u0009" + self.steady_text + "\u0008"
