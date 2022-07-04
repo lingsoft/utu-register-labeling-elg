@@ -2,9 +2,10 @@ import unittest
 import os
 
 from app.utils import basic_tokenize
+from app.utils import full_register_name
 
 
-class TestUtils(unittest.TestCase):
+class TestBasicTokenizer(unittest.TestCase):
     
     def setUp(self):
         self.fi_text = "Tämä on testi."
@@ -37,6 +38,24 @@ class TestUtils(unittest.TestCase):
     def test_tokenizer_wrong_language(self):
         tokens = basic_tokenize(self.wrong_lang)
         self.assertEqual(len(tokens), 4)
+
+
+class TestRegisterNames(unittest.TestCase):
+
+    def test_registers_correct(self):
+        label = "NA"
+        label, name = full_register_name(label)
+        self.assertEqual(name, "Narrative")
+
+    def test_registers_wrong_label(self):
+        label = "xx"
+        label, name = full_register_name(label)
+        self.assertEqual(name, "Unknown")
+
+    def test_registers_none(self):
+        label = None
+        label, name = full_register_name(label)
+        self.assertEqual(name, "Unknown")
 
 
 if __name__ == "__main__":
