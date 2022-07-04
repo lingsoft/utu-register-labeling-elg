@@ -17,6 +17,10 @@ def create_payload(text):
     return {"type": "text", "content": text}
 
 
+def create_payload_with_params(text, params):
+     return {"type": "text", "content": text, "params": params}
+
+
 def call_api(payload):
     headers = {'Content-Type': 'application/json'}
     payload = json.dumps(payload)
@@ -76,6 +80,44 @@ class TestIntegration(unittest.TestCase):
         response = call_api(payload)["response"]
         self.assertIn("classes", response)
 
+    def test_api_response_with_valid_parameters(self):
+        params = {"threshold": 0.2, "sub_registers": False}
+        payload = create_payload_with_params(self.steady_text, params)
+        response = call_api(payload)["response"]
+        self.assertEqual(len(response["warnings"]), 0)
+
+
+    def test_api_response_with_invalid_threshold(self):
+        params = {"threshold": None}
+        payload = create_payload_with_params(self.steady_text, params)
+        response = call_api(payload)["response"]
+        self.assertEqual(response["warnings"][0]["code"],
+                "lingsoft.params.invalid.type")
+
+    def test_api_response_with_invalid_sub_registers(self):
+        params = {"sub_registers": "False"}
+        payload = create_payload_with_params(self.steady_text, params)
+        response = call_api(payload)["response"]
+        self.assertEqual(response["warnings"][0]["code"],
+                "lingsoft.params.invalid.type")
+
+    def test_api_response_with_invalid_parameters(self):
+        params = {"threshold": [], "sub_registers": "False"}
+        payload = create_payload_with_params(self.steady_text, params)
+        response = call_api(payload)["response"]
+        self.assertEqual(len(response["warnings"]), 2)
+
+    # TODO ERROR in app isinstance(request, Request)
+    """
+    def test_api_response_with_invalid_params(self):
+        params = "hello"
+        payload = create_payload_with_params(self.steady_text, params)
+        print(payload)
+        response = call_api(payload)["response"]
+        print(response)
+        self.assertEqual(response["warnings"][0]["code"],
+                "lingsoft.params.invalid.type")
+    """
 
 if __name__ == '__main__':
     unittest.main()
