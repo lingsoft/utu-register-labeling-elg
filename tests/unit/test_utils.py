@@ -3,10 +3,13 @@ import os
 
 from app.utils import basic_tokenize
 from app.utils import full_register_name
+from app.utils import validate_params_type
+from app.utils import validate_threshold
+from app.utils import validate_sub_registers
 
 
 class TestBasicTokenizer(unittest.TestCase):
-    
+
     def setUp(self):
         self.fi_text = "Tämä on testi."
         self.empty = ""
@@ -56,6 +59,82 @@ class TestRegisterNames(unittest.TestCase):
         label = None
         label, name = full_register_name(label)
         self.assertEqual(name, "Unknown")
+
+
+class TestParameterValidation(unittest.TestCase):
+
+    def setUp(self):
+        self.threshold = 0.4
+        self.sub_registers = True
+
+    def test_params_valid_type(self):
+        warning = validate_params_type({})
+        self.assertIsNone(warning)
+
+    def test_params_invalid_type(self):
+        warning = validate_params_type(["threshold", "sub_registers"])
+        self.assertIsNotNone(warning)
+
+    def test_params_sub_registers_valid(self):
+        params = {"sub_registers": False}
+        sub_registers, warning = validate_sub_registers(
+                params, self.sub_registers)
+        self.assertFalse(sub_registers)
+
+    def test_params_sub_registers_missing(self):
+        params = {"sub_regs": False}
+        sub_registers, warning = validate_sub_registers(
+                params, self.sub_registers)
+        self.assertTrue(sub_registers)
+
+    def test_params_sub_registers_conversion(self):
+        params = {"sub_registers": "False"}
+        sub_registers, warning = validate_sub_registers(
+                params, self.sub_registers)
+        self.assertFalse(sub_registers)
+
+    def test_params_sub_registers_with_none(self):
+        params = {"sub_registers": None}
+        sub_registers, warning = validate_sub_registers(
+                params, self.sub_registers)
+        self.assertIsNotNone(warning)
+
+    def test_params_sub_registers_with_none(self):
+        params = {"sub_registers": 0.4}
+        sub_registers, warning = validate_sub_registers(
+                params, self.sub_registers)
+        self.assertIsNotNone(warning)
+
+    def test_params_threshold_valid(self):
+        new_value = 0.6
+        params = {"threshold": new_value}
+        threshold, warning = validate_threshold(params, self.threshold)
+        self.assertEqual(threshold, new_value)
+
+    def test_params_threshold_with_none(self):
+        params = {"threshold": None}
+        threshold, warning = validate_threshold(params, self.threshold)
+        self.assertEqual(threshold, self.threshold)
+
+    def test_params_threshold_missing(self):
+        params = {"thres": 0.6}
+        threshold, warning = validate_threshold(params, self.threshold)
+        self.assertEqual(threshold, self.threshold)
+
+    def test_params_threshold_valid_convertsion(self):
+        params = {"threshold": "0.6"}
+        threshold, warning = validate_threshold(params, self.threshold)
+        self.assertIsNone(warning)
+
+    def test_params_threshold_missing(self):
+        params = {"threshold": [0.6]}
+        threshold, warning = validate_threshold(params, self.threshold)
+        self.assertIsNotNone(warning)
+
+    def test_params_threshold_out_of_bounds(self):
+        params = {"threshold": -0.6}
+        threshold, warning = validate_threshold(params, self.threshold)
+        self.assertIsNotNone(warning)
 
 
 if __name__ == "__main__":
