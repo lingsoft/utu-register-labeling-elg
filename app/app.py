@@ -27,12 +27,15 @@ class RegLab(FlaskService):
         threshold = 0.4
         all_labels = True
 
+        if len(content) > MAX_CHAR:
+            error = StandardMessages.generate_elg_request_too_large()
+            return Failure(errors=[error])
+
         if len(basic_tokenize(content)) > MAX_TOKENS:
             error = StatusMessage(
                     code="lingsoft.token.too.many",
                     text="Given text contains too many tokens",
                     params=[])
-
             return Failure(errors=[error])
 
         longest = 0
@@ -45,10 +48,6 @@ class RegLab(FlaskService):
                     params=[])
             return Failure(errors=[error])
 
-        if len(content) > MAX_CHAR:
-            error = StandardMessages.generate_elg_request_too_large()
-            return Failure(errors=[error])
-
         # TODO Add parameter handling
 
         try:
@@ -59,7 +58,7 @@ class RegLab(FlaskService):
                 if prob > threshold:
                     if all_labels or label.isupper():
                         classes.append({
-                            "class": label,
+                            "class": label,  ## TODO Full names
                             "score": prob,
                         })
             return ClassificationResponse(classes=classes)
