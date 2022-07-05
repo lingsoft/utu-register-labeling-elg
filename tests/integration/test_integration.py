@@ -84,7 +84,7 @@ class TestIntegration(unittest.TestCase):
         params = {"threshold": 0.2, "sub_registers": False}
         payload = create_payload_with_params(self.steady_text, params)
         response = call_api(payload)["response"]
-        self.assertEqual(len(response["warnings"]), 0)
+        self.assertNotIn("warnings", response)
 
     def test_api_response_with_none_threshold(self):
         params = {"threshold": None}
