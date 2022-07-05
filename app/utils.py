@@ -62,7 +62,7 @@ def validate_content(content, max_char, max_tokens, max_token_length):
         return error
 
     longest = 0
-    if content:
+    if content.strip():
         longest = max(len(token) for token in content.split())
     if longest > max_token_length:
         error = StatusMessage(
