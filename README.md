@@ -11,14 +11,16 @@ TODO
 ```
 git clone --recurse-submodules https://github.com/lingsoft/utu-register-labeling-elg.git reglab
 cd reglab
-# TODO ./load-model.sh
-# cd ..
 docker build -t reglab-dev -f Dockerfile.dev .
 docker run -it --rm -p 8000:8000 -v $(pwd):/app -u $(id -u):$(id -g) reglab-dev bash
+# cd app/ttml
+# ./load-fine-tuned.sh
+# python load-tokenizer.py
+# cd ..
 flask run --host 0.0.0.0 --port 8000
 ```
 
-Simple test call (Note slow startup time)
+Simple test call
 
 ```
 curl -X POST -H 'Content-Type: application/json' http://localhost:8000/process -d '{"type":"text","content":"Hello, world!"}'
@@ -27,8 +29,21 @@ curl -X POST -H 'Content-Type: application/json' http://localhost:8000/process -
 Response should be
 
 ```json
-
+{
+  "response": {
+    "type": "classification",
+    "classes": [
+      {
+        "class": "ID - Interactive discussion",
+        "score": 0.5767741799354553
+      }
+    ]
+  }
+}
 ```
+
+More information about registers (classes) can be found from the file
+`app/ttml/README.md`.
 
 ### Tests
 
@@ -36,17 +51,17 @@ Response should be
 python -m unittest discover -s tests/ -v
 ```
 
-### Usage (TODO)
+### Usage
 
 ```
 docker build -t reglab .
 docker run --rm -p 8000:8000 --init reglab
 ```
 
-Or pull directly ready-made image `docker pull lingsoft/utu-bert-ner-fi:tagname`
-(Note different versions. Tag must contain elg.)
+Or pull directly ready-made image
+`docker pull lingsoft/utu-register-labeling:tagname`
 
-### Local installation (TODO)
+### Local installation
 
 Use ELG-compatible service locally
 
