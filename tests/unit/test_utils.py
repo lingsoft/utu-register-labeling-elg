@@ -65,6 +65,18 @@ class TestParameterValidation(unittest.TestCase):
         self.threshold = 0.4
         self.sub_registers = True
 
+    def test_params_sub_registers_with_none(self):
+        params = None
+        sub_registers, warning = validate_sub_registers(
+                params, self.sub_registers)
+        self.assertIsNone(warning)
+
+    def test_params_sub_registers_with_empty(self):
+        params = {}
+        sub_registers, warning = validate_sub_registers(
+                params, self.sub_registers)
+        self.assertIsNone(warning)
+
     def test_params_sub_registers_valid(self):
         params = {"sub_registers": False}
         sub_registers, warning = validate_sub_registers(
@@ -83,7 +95,7 @@ class TestParameterValidation(unittest.TestCase):
                 params, self.sub_registers)
         self.assertFalse(sub_registers)
 
-    def test_params_sub_registers_with_none(self):
+    def test_params_sub_registers_with_value_none(self):
         params = {"sub_registers": None}
         sub_registers, warning = validate_sub_registers(
                 params, self.sub_registers)
@@ -95,13 +107,23 @@ class TestParameterValidation(unittest.TestCase):
                 params, self.sub_registers)
         self.assertIsNotNone(warning)
 
+    def test_params_threshold_with_none(self):
+        params = None
+        threshold, warning = validate_threshold(params, self.threshold)
+        self.assertIsNone(warning)
+
+    def test_params_threshold_with_empty(self):
+        params = {}
+        threshold, warning = validate_threshold(params, self.threshold)
+        self.assertIsNone(warning)
+
     def test_params_threshold_valid(self):
         new_value = 0.6
         params = {"threshold": new_value}
         threshold, warning = validate_threshold(params, self.threshold)
         self.assertEqual(threshold, new_value)
 
-    def test_params_threshold_with_none(self):
+    def test_params_threshold_with_value_none(self):
         params = {"threshold": None}
         threshold, warning = validate_threshold(params, self.threshold)
         self.assertEqual(threshold, self.threshold)
