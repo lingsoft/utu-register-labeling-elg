@@ -2,9 +2,10 @@ import os
 
 from elg import FlaskService
 from elg.model import TextRequest, ClassificationResponse, Failure
+from elg.model.base import StandardMessages
 
 from ttml.predict import load_models, predict
-from utils import basic_tokenize, full_register_name
+from utils import full_register_name
 from utils import validate_content
 from utils import validate_threshold, validate_sub_registers
 
@@ -39,7 +40,7 @@ class RegLab(FlaskService):
             warnings.append(warning)
         sub_registers, warning = validate_sub_registers(params, sub_registers)
         if warning is not None:
-             warnings.append(warning)
+            warnings.append(warning)
 
         try:
             predictions = predict(self.tokenizer, self.model, content)
@@ -51,7 +52,6 @@ class RegLab(FlaskService):
                     if sub_registers or label.isupper():
                         label, name = full_register_name(label)
                         full_name = label + " - " + name
-                        # TODO Add warning if Unknown
                         classes.append({
                             "class": full_name,
                             "score": prob,

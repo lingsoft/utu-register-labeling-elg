@@ -1,5 +1,4 @@
 import unittest
-import os
 
 from app.utils import basic_tokenize
 from app.utils import full_register_name
@@ -90,7 +89,7 @@ class TestParameterValidation(unittest.TestCase):
                 params, self.sub_registers)
         self.assertIsNotNone(warning)
 
-    def test_params_sub_registers_with_none(self):
+    def test_params_sub_registers_with_invalid_value(self):
         params = {"sub_registers": 0.4}
         sub_registers, warning = validate_sub_registers(
                 params, self.sub_registers)
@@ -112,12 +111,12 @@ class TestParameterValidation(unittest.TestCase):
         threshold, warning = validate_threshold(params, self.threshold)
         self.assertEqual(threshold, self.threshold)
 
-    def test_params_threshold_valid_convertsion(self):
+    def test_params_threshold_valid_conversion(self):
         params = {"threshold": "0.6"}
         threshold, warning = validate_threshold(params, self.threshold)
         self.assertIsNone(warning)
 
-    def test_params_threshold_missing(self):
+    def test_params_threshold_invalid_conversion(self):
         params = {"threshold": [0.6]}
         threshold, warning = validate_threshold(params, self.threshold)
         self.assertIsNotNone(warning)

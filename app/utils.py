@@ -1,4 +1,3 @@
-import os
 import sys
 import unicodedata
 # Available for Python < 3.12
@@ -42,7 +41,7 @@ punct_chars = set([
          (i >= 91 and i <= 96) or (i >= 123 and i <= 126)))
 ])
 
-translation_table = str.maketrans({ c: ' '+c+' ' for c in punct_chars })
+translation_table = str.maketrans({c: ' '+c+' ' for c in punct_chars})
 
 
 # Basic tokenizer from keras-bert-ner by TurkuNLP. MIT license.

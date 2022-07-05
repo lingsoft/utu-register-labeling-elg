@@ -12,7 +12,7 @@ N_LABELS = 24
 
 
 class TestPredict(unittest.TestCase):
-    
+
     def setUp(self):
         self.fi_text = "Tämä on testi."
         self.empty = ""
@@ -44,7 +44,7 @@ class TestPredict(unittest.TestCase):
     def test_special_characters(self):
         probs = predict(tokenizer, model, self.spec_chars)
         self.assertEqual(len(probs), N_LABELS)
-    
+
     def test_wrong_language(self):
         probs = predict(tokenizer, model, self.wrong_lang)
         self.assertEqual(len(probs), N_LABELS)
