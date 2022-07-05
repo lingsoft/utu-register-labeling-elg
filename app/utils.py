@@ -75,7 +75,9 @@ def validate_content(content, max_char, max_tokens, max_token_length):
 
 
 def validate_threshold(params, def_threshold):
-    threshold = params.get("threshold")
+    if params is None:
+        return def_threshold, None
+    threshold = params.get("threshold", def_threshold)
     if not isinstance(threshold, float):
         try:
             threshold = float(threshold)
@@ -96,6 +98,8 @@ def validate_threshold(params, def_threshold):
 
 
 def validate_sub_registers(params, def_sub_registers):
+    if params is None:
+        return def_sub_registers, None
     sub_registers = params.get("sub_registers", def_sub_registers)
     if isinstance(sub_registers, bool):
         return sub_registers, None
