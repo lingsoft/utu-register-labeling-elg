@@ -94,6 +94,13 @@ class TestIntegration(unittest.TestCase):
         self.assertEqual(response["warnings"][0]["code"],
                 "lingsoft.params.invalid.type")
 
+    def test_api_response_with_invalid_threshold(self):
+        params = {"threshold": 1.1}
+        payload = create_payload_with_params(self.steady_text, params)
+        response = call_api(payload)["response"]
+        self.assertEqual(response["warnings"][0]["code"],
+                "lingsoft.params.invalid.value")
+
     def test_api_response_with_invalid_sub_registers(self):
         params = {"sub_registers": "False"}
         payload = create_payload_with_params(self.steady_text, params)
@@ -107,17 +114,18 @@ class TestIntegration(unittest.TestCase):
         response = call_api(payload)["response"]
         self.assertEqual(len(response["warnings"]), 2)
 
-    # TODO ERROR in app isinstance(request, Request)
-    """
-    def test_api_response_with_invalid_params(self):
-        params = "hello"
+    def test_api_response_with_general_registers(self):
+        params = {"threshold": "-0.6", "sub_registers": "False"}
         payload = create_payload_with_params(self.steady_text, params)
-        print(payload)
         response = call_api(payload)["response"]
-        print(response)
-        self.assertEqual(response["warnings"][0]["code"],
-                "lingsoft.params.invalid.type")
-    """
+        self.assertEqual(len(response["classes"]), 8)
+
+    def test_api_response_with_empty_params(self):
+        params = {}
+        payload = create_payload_with_params(self.steady_text, params)
+        response = call_api(payload)["response"]
+        self.assertGreater(len(response.get("classes")), 0)
+
 
 if __name__ == '__main__':
     unittest.main()
