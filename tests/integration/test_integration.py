@@ -54,6 +54,18 @@ class TestIntegration(unittest.TestCase):
         response = call_api(payload)["response"]
         self.assertIn("classes", response)
 
+    def test_api_response_with_whitespace_text(self):
+        payload = create_payload("  ")
+        response = call_api(payload)["response"]
+        self.assertIn("classes", response)
+
+    def test_api_response_with_too_many_chars(self):
+        long_text = "a b c d e " * 501
+        payload = create_payload(long_text)
+        response = call_api(payload)
+        self.assertEqual(response["failure"]["errors"][0]["code"],
+                         "elg.request.too.large")
+
     def test_api_response_with_too_long_text(self):
         long_text = "Long set. " * 200
         payload = create_payload(long_text)
