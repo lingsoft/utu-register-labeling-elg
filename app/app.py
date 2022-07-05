@@ -5,7 +5,7 @@ from elg.model import TextRequest, ClassificationResponse, Failure
 
 from ttml.predict import load_models, predict
 from utils import basic_tokenize, full_register_name
-from utils import validate_content, validate_params_type
+from utils import validate_content
 from utils import validate_threshold, validate_sub_registers
 
 
