@@ -21,31 +21,31 @@ class TestPredict(unittest.TestCase):
         self.spec_chars = "\N{grinning face}\u4e01\u0009" + self.fi_text + "\u0008"
         self.wrong_lang = "使用人口について正確な統計はないが、日本国内の人口、"
 
-    def test_model_loading_failure(self):
+    def test_predict_model_loading_failure(self):
         with self.assertRaises(OSError):
             tokenizer, model = load_models("abc", "def")
 
-    def test_number_of_labels(self):
+    def test_predict_number_of_labels(self):
         probs = predict(tokenizer, model, self.fi_text)
         self.assertEqual(len(probs), N_LABELS)
 
-    def test_empty_string(self):
+    def test_predict_empty_string(self):
         probs = predict(tokenizer, model, self.empty)
         self.assertEqual(len(probs), N_LABELS)
 
-    def test_long_token_failure(self):
+    def test_predict_long_token_failure(self):
         with self.assertRaises(RuntimeError):
             probs = predict(tokenizer, model, self.long_token)
 
-    def test_long_text_failure(self):
+    def test_predict_long_text_failure(self):
         with self.assertRaises(RuntimeError):
             probs = predict(tokenizer, model, self.long_text)
 
-    def test_special_characters(self):
+    def test_predict_special_characters(self):
         probs = predict(tokenizer, model, self.spec_chars)
         self.assertEqual(len(probs), N_LABELS)
 
-    def test_wrong_language(self):
+    def test_predict_wrong_language(self):
         probs = predict(tokenizer, model, self.wrong_lang)
         self.assertEqual(len(probs), N_LABELS)
 
