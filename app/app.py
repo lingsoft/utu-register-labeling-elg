@@ -15,7 +15,7 @@ TOK_NAME = os.path.join(MODEL_DIR, "xlm-roberta-base")
 FINE_TUNED = os.path.join(MODEL_DIR, "xlmr-base-en-fi-fr-se.pt")
 MAX_TOKENS = 512
 MAX_TOKEN_LENGTH = 100
-MAX_CHAR = 10000
+MAX_CHAR = 5000
 
 
 class RegLab(FlaskService):
