@@ -75,17 +75,6 @@ def validate_content(content, max_char, max_tokens, max_token_length):
     return None
 
 
-def validate_params_type(params):
-    if isinstance(params, dict):
-        return None
-    else:
-        warning = StatusMessage(
-                code="lingsoft.parmas.invalid.type",
-                text="Params should be dictionary",
-                params=[])
-        return warning 
-
-
 def validate_threshold(params, def_threshold):
     threshold = params.get("threshold")
     if not isinstance(threshold, float):

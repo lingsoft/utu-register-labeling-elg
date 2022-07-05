@@ -3,7 +3,6 @@ import os
 
 from app.utils import basic_tokenize
 from app.utils import full_register_name
-from app.utils import validate_params_type
 from app.utils import validate_threshold
 from app.utils import validate_sub_registers
 
@@ -66,14 +65,6 @@ class TestParameterValidation(unittest.TestCase):
     def setUp(self):
         self.threshold = 0.4
         self.sub_registers = True
-
-    def test_params_valid_type(self):
-        warning = validate_params_type({})
-        self.assertIsNone(warning)
-
-    def test_params_invalid_type(self):
-        warning = validate_params_type(["threshold", "sub_registers"])
-        self.assertIsNotNone(warning)
 
     def test_params_sub_registers_valid(self):
         params = {"sub_registers": False}

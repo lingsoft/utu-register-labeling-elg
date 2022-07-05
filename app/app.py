@@ -33,19 +33,13 @@ class RegLab(FlaskService):
         sub_registers = True
         warnings = []
 
-        params = request.params
-        if params: 
-            params_warning = validate_params_type(params) 
-            if params_warning is None:
-                threshold, warning = validate_threshold(params, threshold)
-                if warning is not None:
-                    warnings.append(warning)
-                sub_registers, warning = validate_sub_registers(
-                        params, sub_registers)
-                if warning is not None:
-                    warnings.append(warning)
-            else:
-                warnings.append(params_warning)
+        params = request.params or {}
+        threshold, warning = validate_threshold(params, threshold)
+        if warning is not None:
+            warnings.append(warning)
+        sub_registers, warning = validate_sub_registers(params, sub_registers)
+        if warning is not None:
+             warnings.append(warning)
 
         try:
             predictions = predict(self.tokenizer, self.model, content)
