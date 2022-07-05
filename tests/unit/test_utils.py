@@ -9,7 +9,7 @@ from app.utils import validate_sub_registers
 
 MAX_TOKENS = 512
 MAX_TOKEN_LENGTH = 100
-MAX_CHAR = 5000
+MAX_CHAR = 2000
 
 
 class TestBasicTokenizer(unittest.TestCase):
