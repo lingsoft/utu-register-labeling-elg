@@ -2,8 +2,14 @@ import unittest
 
 from app.utils import basic_tokenize
 from app.utils import full_register_name
+from app.utils import validate_content
 from app.utils import validate_threshold
 from app.utils import validate_sub_registers
+
+
+MAX_TOKENS = 512
+MAX_TOKEN_LENGTH = 100
+MAX_CHAR = 5000
 
 
 class TestBasicTokenizer(unittest.TestCase):
@@ -57,6 +63,41 @@ class TestRegisterNames(unittest.TestCase):
         label = None
         label, name = full_register_name(label)
         self.assertEqual(name, "Unknown")
+
+
+class TestContentValidation(unittest.TestCase):
+
+    def setUp(self):
+        self.fi_text = "Tämä on testi."
+        self.empty = "  "
+        self.many_chars = "a b c d e " * 501
+        self.long_token = "?" * 200
+        self.long_text = "Long set. " * 200
+
+    def test_content_valid(self):
+        error = validate_content(
+                self.fi_text, MAX_CHAR, MAX_TOKENS, MAX_TOKEN_LENGTH)
+        self.assertIsNone(error)
+
+    def test_content_too_many_chars(self):
+        error = validate_content(
+                self.many_chars, MAX_CHAR, MAX_TOKENS, MAX_TOKEN_LENGTH)
+        self.assertIsNotNone(error)
+
+    def test_content_too_long_text(self):
+        error = validate_content(
+                self.long_text, MAX_CHAR, MAX_TOKENS, MAX_TOKEN_LENGTH)
+        self.assertIsNotNone(error)
+
+    def test_content_too_long_token(self):
+        error = validate_content(
+                self.long_token, MAX_CHAR, MAX_TOKENS, MAX_TOKEN_LENGTH)
+        self.assertIsNotNone(error)
+
+    def test_content_empty(self):
+        error = validate_content(
+                self.empty, MAX_CHAR, MAX_TOKENS, MAX_TOKEN_LENGTH)
+        self.assertIsNone(error)
 
 
 class TestParameterValidation(unittest.TestCase):
