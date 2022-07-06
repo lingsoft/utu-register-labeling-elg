@@ -1,8 +1,20 @@
-# utu-register-labeling-elg
+# Multi-label register classification
 
 ## Information
 
-TODO
+This repository contains
+[ELG compatible](https://european-language-grid.readthedocs.io/en/stable/all/A3_API/LTInternalAPI.html)
+Flask based REST API for
+[Multi-label register classification](https://github.com/annsaln/torch-transformers-multilabel)
+It is trained for web documents and
+this version supports four languages: Finnish, Swedish, English and French.
+Models are available [here](http://dl.turkunlp.org/register-labeling-model/).
+
+Original authors: TurkuNLP (Veronika Laippala et al.) under different
+[projects](https://turkunlp.org/projects.html).
+
+This ELG API was developed in EU's CEF project:
+[Microservices at your service](https://www.lingsoft.fi/en/microservices-at-your-service-bridging-gap-between-nlp-research-and-industry).
 
 ## Quickstart
 
@@ -19,6 +31,22 @@ docker run -it --rm -p 8000:8000 -v $(pwd):/app -u $(id -u):$(id -g) reglab-dev 
 # cd ..
 flask run --host 0.0.0.0 --port 8000
 ```
+
+Tests
+
+```
+python -m unittest discover -s tests/ -v
+```
+
+### Usage
+
+```
+docker build -t reglab .
+docker run --rm -p 8000:8000 --init reglab
+```
+
+Or pull directly ready-made image
+`docker pull lingsoft/utu-register-labeling:tagname`
 
 Simple test call
 
@@ -42,24 +70,30 @@ Response should be
 }
 ```
 
-More information about registers (classes) can be found from the file
-`app/ttml/README.md`.
+More information about registers (classes or text genres) can be found from
+the file `app/ttml/README.md`.
 
-### Tests
+Text request can also contain parameters:
 
+```json
+{
+    "type": "text",
+    "content": "Hello, world!",
+    "params": {
+        "threshold": 0.1,
+        "sub_registers": False
+    }
+}
 ```
-python -m unittest discover -s tests/ -v
-```
 
-### Usage
+The `content` property contains text to be analyzed.
+Note that text can not be too long (512 tokens).
+The `params` property is optional and can contain
 
-```
-docker build -t reglab .
-docker run --rm -p 8000:8000 --init reglab
-```
-
-Or pull directly ready-made image
-`docker pull lingsoft/utu-register-labeling:tagname`
+- `threshold` (float, default = 0.4, range 0.0-1.0)
+  - minimum score below which results will not be returned
+- `sub_registers` (boolean, default = True)
+  - maximum number of subjects to return
 
 ### Local installation
 
