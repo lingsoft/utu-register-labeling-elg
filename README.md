@@ -93,7 +93,7 @@ The `params` property is optional and can contain
 - `threshold` (float, default = 0.4, range 0.0-1.0)
   - minimum score below which results will not be returned
 - `sub_registers` (boolean, default = true)
-  - maximum number of subjects to return
+  - include also sub-registers (if false then general registers only)
 
 ### Local installation
 
