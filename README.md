@@ -81,7 +81,7 @@ Text request can also contain parameters:
     "content": "Hello, world!",
     "params": {
         "threshold": 0.1,
-        "sub_registers": False
+        "sub_registers": false
     }
 }
 ```
@@ -92,7 +92,7 @@ The `params` property is optional and can contain
 
 - `threshold` (float, default = 0.4, range 0.0-1.0)
   - minimum score below which results will not be returned
-- `sub_registers` (boolean, default = True)
+- `sub_registers` (boolean, default = true)
   - maximum number of subjects to return
 
 ### Local installation
